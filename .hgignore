@@ -4,6 +4,7 @@ zefram.egg-info/**
 zefram/__pycache__/**
 docs/ipynb/.ipynb_checkpoints/**
 docs/_build/**
+docs/_reference/**
 dist/**
 build/**
 *.x

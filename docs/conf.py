@@ -12,14 +12,29 @@ import sys
 import os
 import inspect
 from sphinx import apidoc
+import sphinx_rtd_theme
 
+if sys.version_info.major == 3:
+    from unittest.mock import MagicMock    # if python ver >= 3.3
+else:
+    from mock import Mock as MagicMock     # if python ver 2.7
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['argparse', 'numpy', 'scipy', 'scipy.optimize', 'pandas',
+    'sqlalchemy', 'sqlalchemy.orm', 'sqlalchemy.ext', 'sqlalchemy.ext.associationproxy',
+    'sqlalchemy.ext.declarative', 'sqlalchemy.ext.hybrid']
+sys.modules.update((mod_name, Mock) for mod_name in MOCK_MODULES)
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))
 
-output_dir = os.path.join(__location__, "../docs/_rst")
+output_dir = os.path.join(__location__, "../docs/_reference")
 module_dir = os.path.join(__location__, "../zefram")
-cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
+cmd_line_template = "sphinx-apidoc -f --separate -o {outputdir} {moduledir}"
 cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
 apidoc.main(cmd_line.split(" "))
 
@@ -37,7 +52,7 @@ apidoc.main(cmd_line.split(" "))
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
               'sphinx.ext.autosummary', 'sphinx.ext.viewcode', 'sphinx.ext.coverage',
-              'sphinx.ext.doctest', 'sphinx.ext.ifconfig', 'sphinx.ext.pngmath']
+              'sphinx.ext.doctest', 'sphinx.ext.ifconfig', 'sphinx.ext.mathjax']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -106,7 +121,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

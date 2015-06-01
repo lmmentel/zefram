@@ -12,7 +12,7 @@ Contents
    :maxdepth: 2
 
    License <license>
-   Module Reference <_rst/modules>
+   Module Reference <_reference/modules>
 
 
 Indices and tables
