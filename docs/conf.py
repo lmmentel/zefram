@@ -19,15 +19,17 @@ if sys.version_info.major == 3:
 else:
     from mock import Mock as MagicMock     # if python ver 2.7
 
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-            return Mock()
+Mock = MagicMock
+
+#class Mock(MagicMock):
+#   @classmethod
+#    def __getattr__(cls, name):
+#            return Mock()
 
 MOCK_MODULES = ['argparse', 'numpy', 'scipy', 'scipy.optimize', 'pandas',
     'sqlalchemy', 'sqlalchemy.orm', 'sqlalchemy.ext', 'sqlalchemy.ext.associationproxy',
     'sqlalchemy.ext.declarative', 'sqlalchemy.ext.hybrid']
-sys.modules.update((mod_name, Mock) for mod_name in MOCK_MODULES)
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 __location__ = os.path.join(os.getcwd(), os.path.dirname(
     inspect.getfile(inspect.currentframe())))

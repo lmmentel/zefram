@@ -38,6 +38,13 @@ def get_session():
     db_session =  sessionmaker(bind=engine, autoflush=False, autocommit=False)
     return db_session()
 
+def get_engine():
+    '''Return the database engine.'''
+
+    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frameworks.db")
+    engine = create_engine("sqlite:///{path:s}".format(path=dbpath), echo=False)
+    return engine
+
 Base = declarative_base()
 
 fw_rings = Table('fw_rings', Base.metadata,
