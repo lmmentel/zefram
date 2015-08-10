@@ -45,6 +45,10 @@ def setup_package():
               'SQLAlchemy',
               'numpy',
           ],
+          scripts = [
+              'scripts/getcif.py',
+              'scripts/printframework.py',
+          ],
     )
 
 if __name__ == "__main__":
