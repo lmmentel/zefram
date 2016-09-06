@@ -2,6 +2,7 @@
 ''' zefram module '''
 
 import numpy as np
+import pandas as pd
 import os
 from operator import attrgetter
 
@@ -44,6 +45,30 @@ def get_engine():
     dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frameworks.db")
     engine = create_engine("sqlite:///{path:s}".format(path=dbpath), echo=False)
     return engine
+
+def get_table(tablename,  **kwargs):
+    '''
+    Return a table from the database as pandas DataFrame
+
+    Args:
+      tablename: str
+        Name of the table from the database
+      kwargs:
+        A dictionary of keyword arguments to pass to the `pandas.read_qsl`
+
+    Returns:
+      df: pandas.DataFrame
+        Pandas DataFrame with the contents of the table
+    '''
+
+    tables = ['frameworks']
+
+    if tablename in tables:
+        engine = get_engine()
+        df = pd.read_sql(tablename, engine, **kwargs)
+        return df
+    else:
+        raise ValueError('Table should be one of: {}'.format(", ".join(tables)))
 
 Base = declarative_base()
 
