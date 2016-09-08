@@ -45,10 +45,12 @@ def setup_package():
               'SQLAlchemy',
               'numpy',
           ],
-          scripts = [
-              'scripts/getcif.py',
-              'scripts/printframework.py',
-          ],
+          entry_points = {
+              'console_scripts': [
+                  'getcif.py = zefram.zefram:cli_getcif',
+                  'printframework.py = zefram.zefram:cli_print_framework',
+               ],
+          }
     )
 
 if __name__ == "__main__":
