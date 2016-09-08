@@ -69,7 +69,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pyzeolites'
+project = u'zefram'
 copyright = u'2015, Lukasz Mentel'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -77,7 +77,7 @@ copyright = u'2015, Lukasz Mentel'
 # built documents.
 #
 # The short X.Y version.
-version = ''  # Is set by calling `setup.py docs`
+version = '0.1.0'  # Is set by calling `setup.py docs`
 # The full version, including alpha/beta/rc tags.
 release = ''  # Is set by calling `setup.py docs`
 
@@ -136,7 +136,7 @@ html_theme = 'sphinx_rtd_theme'
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
 try:
-    from pyzeolites import __version__ as version
+    from zefram import __version__ as version
 except ImportError:
     pass
 else:
@@ -201,7 +201,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pyzeolites-doc'
+htmlhelp_basename = 'zefram-doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -220,7 +220,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'user_guide.tex', u'pyzeolites Documentation',
+  ('index', 'user_guide.tex', u'zefram Documentation',
    u'Lukasz Mentel', 'manual'),
 ]
 
