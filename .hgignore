@@ -7,6 +7,7 @@ docs/_build/**
 docs/_reference/**
 dist/**
 build/**
+notebooks/.ipynb_checkpoints/**
 *.x
 *.a
 *.so
