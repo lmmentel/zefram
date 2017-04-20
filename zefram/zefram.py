@@ -7,13 +7,14 @@ import argparse
 import numpy as np
 import pandas as pd
 import os
-from operator import attrgetter
 
-from sqlalchemy import Column, Table, Boolean, Integer, String, Float, create_engine, ForeignKey
+from sqlalchemy import (Column, Table, Boolean, Integer, String, Float,
+                        create_engine, ForeignKey)
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 #from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
+
 
 def framework(codes):
 
@@ -27,6 +28,7 @@ def framework(codes):
     else:
         raise ValueError("Expected a <list>, <tuple> or <str> of length 3, got: {}".format(type(codes)))
 
+
 def get_framework(code):
     '''Return a database entry for framework matching the "code"'''
 
@@ -34,22 +36,29 @@ def get_framework(code):
 
     return session.query(Framework).filter(Framework.code == code).one()
 
+
 def get_session():
     '''Return the database session connection.'''
 
-    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frameworks.db")
-    engine = create_engine("sqlite:///{path:s}".format(path=dbpath), echo=False)
-    db_session =  sessionmaker(bind=engine, autoflush=False, autocommit=False)
+    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                          "frameworks.db")
+    engine = create_engine("sqlite:///{path:s}".format(path=dbpath),
+                           echo=False)
+    db_session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     return db_session()
+
 
 def get_engine():
     '''Return the database engine.'''
 
-    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frameworks.db")
-    engine = create_engine("sqlite:///{path:s}".format(path=dbpath), echo=False)
+    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                          "frameworks.db")
+    engine = create_engine("sqlite:///{path:s}".format(path=dbpath),
+                           echo=False)
     return engine
 
-def get_table(tablename,  **kwargs):
+
+def get_table(tablename, **kwargs):
     '''
     Return a table from the database as pandas DataFrame
 
@@ -73,17 +82,21 @@ def get_table(tablename,  **kwargs):
     else:
         raise ValueError('Table should be one of: {}'.format(", ".join(tables)))
 
+
 Base = declarative_base()
 
+
 fw_rings = Table('fw_rings', Base.metadata,
-                Column('framework_id', Integer, ForeignKey('frameworks.id')),
-                Column('ringsize_id', Integer, ForeignKey('ringsizes.id'))
+                 Column('framework_id', Integer, ForeignKey('frameworks.id')),
+                 Column('ringsize_id', Integer, ForeignKey('ringsizes.id'))
                  )
 
+
 fw_tilings = Table('fw_tilings', Base.metadata,
-                Column('framework_id', Integer, ForeignKey('frameworks.id')),
-                Column('tiling_id', Integer, ForeignKey('naturaltilings.id'))
-                 )
+                   Column('framework_id', Integer, ForeignKey('frameworks.id')),
+                   Column('tiling_id', Integer, ForeignKey('naturaltilings.id'))
+                   )
+
 
 class RingSize(Base):
     '''
@@ -102,6 +115,7 @@ class RingSize(Base):
     def __repr__(self):
         return "<RingSizes(size={0:3d})>".format(self.size)
 
+
 class NaturalTiling(Base):
     '''
     Framework natural tiling
@@ -118,6 +132,7 @@ class NaturalTiling(Base):
 
     def __repr__(self):
         return "<NaturalTiling(name={0:s})>".format(self.name)
+
 
 class SpaceGroup(Base):
     '''
@@ -147,6 +162,7 @@ class SpaceGroup(Base):
     def __repr__(self):
         return "<SpaceGroup(name={0}, number={1}, cell_setting={2}, cs_code={3}>".format(
             self.name, self.number, self.cell_setting, self.cs_code)
+
 
 class TAtom(Base):
     '''
@@ -199,10 +215,11 @@ class TAtom(Base):
 
     def __repr__(self):
         return "%s(\n%s)" % (
-                 (self.__class__.__name__),
-                 ' '.join(["\t%s=%r,\n" % (key, getattr(self, key))
-                            for key in sorted(self.__dict__.keys())
-                            if not key.startswith('_')]))
+            (self.__class__.__name__),
+            ' '.join(["\t%s=%r,\n" % (key, getattr(self, key))
+                      for key in sorted(self.__dict__.keys())
+                      if not key.startswith('_')]))
+
 
 class Framework(Base):
     '''
@@ -325,14 +342,14 @@ class Framework(Base):
     id = Column(Integer, primary_key=True)
     # common fields
     code = Column(String)
-    #zeomics fileds
+    # zeomics fileds
     atoms = Column(Integer)
     cages = Column(Integer)
     channels = Column(Integer)
     connections = Column(Integer)
     junctions = Column(Integer)
     lcd = Column(Float)
-    name =  Column(String)
+    name = Column(String)
     pld = Column(Float)
     portals = Column(Integer)
     tpw_abs = Column(Float)
@@ -375,18 +392,21 @@ class Framework(Base):
     speacegroup = relationship("SpaceGroup", uselist=False)
 
     # many to many relationships
-    ring_sizes = relationship('RingSize', secondary=fw_rings, backref='frameworks')
-    natural_tilings = relationship('NaturalTiling', secondary=fw_tilings, backref='frameworks')
+    ring_sizes = relationship('RingSize', secondary=fw_rings,
+                              backref='frameworks')
+    natural_tilings = relationship('NaturalTiling', secondary=fw_tilings,
+                                   backref='frameworks')
 
     # one to many relationship
     tatoms = relationship("TAtom")
 
     def __repr__(self):
         return "%s(\n%s)" % (
-                 (self.__class__.__name__),
-                 ' '.join(["\t%s=%r,\n" % (key, getattr(self, key))
-                            for key in sorted(self.__dict__.keys())
-                            if not key.startswith('_')]))
+            (self.__class__.__name__),
+            ' '.join(["\t%s=%r,\n" % (key, getattr(self, key))
+                      for key in sorted(self.__dict__.keys())
+                      if not key.startswith('_')]))
+
 
 def cli_getcif():
     'CLI to get the cif files'
@@ -403,6 +423,7 @@ def cli_getcif():
         with open(fname, 'w') as out:
             out.write(fram.cif)
         print('Wrote to file: {}'.format(fname))
+
 
 def cli_print_framework():
     'CLI interface for getting information about a given framework'
@@ -426,4 +447,3 @@ def cli_print_framework():
             ])
 
         print(code, cell, sep='\n')
-
