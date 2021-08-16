@@ -14,11 +14,11 @@ Dependencies
 Installation
 ============
 
-After downloading and unpacking enter the ``zefram`` directory and install by
+Simplest way to install ``zefram`` is with ``pip``:
 
 .. code-block:: bash
 
-   python setup.py install [--user]
+   pip install zefram
 
 
 .. _SQLalchemy: http://www.sqlalchemy.org
