@@ -1,5 +1,4 @@
-
-''' zefram module '''
+""" zefram module """
 
 from __future__ import print_function
 
@@ -8,11 +7,20 @@ import numpy as np
 import pandas as pd
 import os
 
-from sqlalchemy import (Column, Table, Boolean, Integer, String, Float,
-                        create_engine, ForeignKey)
+from sqlalchemy import (
+    Column,
+    Table,
+    Boolean,
+    Integer,
+    String,
+    Float,
+    create_engine,
+    ForeignKey,
+)
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-#from sqlalchemy.ext.associationproxy import association_proxy
+
+# from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
@@ -26,7 +34,11 @@ def framework(codes):
         else:
             raise ValueError("wrong framework code: {}".format(codes))
     else:
-        raise ValueError("Expected a <list>, <tuple> or <str> of length 3, got: {}".format(type(codes)))
+        raise ValueError(
+            "Expected a <list>, <tuple> or <str> of length 3, got: {}".format(
+                type(codes)
+            )
+        )
 
 
 def get_framework(code):
@@ -38,28 +50,24 @@ def get_framework(code):
 
 
 def get_session():
-    '''Return the database session connection.'''
+    """Return the database session connection."""
 
-    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                          "frameworks.db")
-    engine = create_engine("sqlite:///{path:s}".format(path=dbpath),
-                           echo=False)
+    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frameworks.db")
+    engine = create_engine("sqlite:///{path:s}".format(path=dbpath), echo=False)
     db_session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     return db_session()
 
 
 def get_engine():
-    '''Return the database engine.'''
+    """Return the database engine."""
 
-    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                          "frameworks.db")
-    engine = create_engine("sqlite:///{path:s}".format(path=dbpath),
-                           echo=False)
+    dbpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "frameworks.db")
+    engine = create_engine("sqlite:///{path:s}".format(path=dbpath), echo=False)
     return engine
 
 
 def get_table(tablename, **kwargs):
-    '''
+    """
     Return a table from the database as pandas DataFrame
 
     Args:
@@ -71,43 +79,47 @@ def get_table(tablename, **kwargs):
     Returns:
       df: pandas.DataFrame
         Pandas DataFrame with the contents of the table
-    '''
+    """
 
-    tables = ['frameworks']
+    tables = ["frameworks"]
 
     if tablename in tables:
         engine = get_engine()
         df = pd.read_sql(tablename, engine, **kwargs)
         return df
     else:
-        raise ValueError('Table should be one of: {}'.format(", ".join(tables)))
+        raise ValueError("Table should be one of: {}".format(", ".join(tables)))
 
 
 Base = declarative_base()
 
 
-fw_rings = Table('fw_rings', Base.metadata,
-                 Column('framework_id', Integer, ForeignKey('frameworks.id')),
-                 Column('ringsize_id', Integer, ForeignKey('ringsizes.id'))
-                 )
+fw_rings = Table(
+    "fw_rings",
+    Base.metadata,
+    Column("framework_id", Integer, ForeignKey("frameworks.id")),
+    Column("ringsize_id", Integer, ForeignKey("ringsizes.id")),
+)
 
 
-fw_tilings = Table('fw_tilings', Base.metadata,
-                   Column('framework_id', Integer, ForeignKey('frameworks.id')),
-                   Column('tiling_id', Integer, ForeignKey('naturaltilings.id'))
-                   )
+fw_tilings = Table(
+    "fw_tilings",
+    Base.metadata,
+    Column("framework_id", Integer, ForeignKey("frameworks.id")),
+    Column("tiling_id", Integer, ForeignKey("naturaltilings.id")),
+)
 
 
 class RingSize(Base):
-    '''
+    """
     Framework ring sizes
 
     Attributes
       size : int
         Number of T atoms forming the ring
-    '''
+    """
 
-    __tablename__ = 'ringsizes'
+    __tablename__ = "ringsizes"
 
     id = Column(Integer, primary_key=True)
     size = Column(Integer, nullable=False)
@@ -117,15 +129,15 @@ class RingSize(Base):
 
 
 class NaturalTiling(Base):
-    '''
+    """
     Framework natural tiling
 
     Attributes
       name : str
         Name of the tiling, http://izasc.fos.su.se/fmi/xsl/IZA-SC/TilingList.htm
-    '''
+    """
 
-    __tablename__ = 'naturaltilings'
+    __tablename__ = "naturaltilings"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -135,7 +147,7 @@ class NaturalTiling(Base):
 
 
 class SpaceGroup(Base):
-    '''
+    """
     Space Group
 
     Attributes:
@@ -149,9 +161,9 @@ class SpaceGroup(Base):
         Additional cell settings
       cs_code : str
         Coordinate system code
-    '''
+    """
 
-    __tablename__ = 'spacegroups'
+    __tablename__ = "spacegroups"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -160,12 +172,15 @@ class SpaceGroup(Base):
     cs_code = Column(Integer)
 
     def __repr__(self):
-        return "<SpaceGroup(name={0}, number={1}, cell_setting={2}, cs_code={3}>".format(
-            self.name, self.number, self.cell_setting, self.cs_code)
+        return (
+            "<SpaceGroup(name={0}, number={1}, cell_setting={2}, cs_code={3}>".format(
+                self.name, self.number, self.cell_setting, self.cs_code
+            )
+        )
 
 
 class TAtom(Base):
-    '''
+    """
     Symmetry unique T-atom
 
     Attributes:
@@ -190,12 +205,12 @@ class TAtom(Base):
         Site symmetry
       vertex_symbol : str
         Vertex symbol
-    '''
+    """
 
-    __tablename__ = 'tatoms'
+    __tablename__ = "tatoms"
 
     id = Column(Integer, primary_key=True)
-    framework_id = Column(Integer, ForeignKey('frameworks.id'))
+    framework_id = Column(Integer, ForeignKey("frameworks.id"))
     name = Column(String)
     multiplicity = Column(Integer)
     sym_restrictions = Column(String)
@@ -216,13 +231,18 @@ class TAtom(Base):
     def __repr__(self):
         return "%s(\n%s)" % (
             (self.__class__.__name__),
-            ' '.join(["\t%s=%r,\n" % (key, getattr(self, key))
-                      for key in sorted(self.__dict__.keys())
-                      if not key.startswith('_')]))
+            " ".join(
+                [
+                    "\t%s=%r,\n" % (key, getattr(self, key))
+                    for key in sorted(self.__dict__.keys())
+                    if not key.startswith("_")
+                ]
+            ),
+        )
 
 
 class Framework(Base):
-    '''
+    """
     Zeolite framework.
 
     Attributes:
@@ -335,7 +355,7 @@ class Framework(Base):
       url_zeomics : str
         URL on the ZEOMICS wbesite (http://helios.princeton.edu/zeomics/) from
         which the data was extracted
-    '''
+    """
 
     __tablename__ = "frameworks"
 
@@ -388,14 +408,14 @@ class Framework(Base):
     url_iza = Column(String)
 
     # many to one relationship
-    _spacegroup_id = Column(Integer, ForeignKey('spacegroups.id'))
+    _spacegroup_id = Column(Integer, ForeignKey("spacegroups.id"))
     speacegroup = relationship("SpaceGroup", uselist=False)
 
     # many to many relationships
-    ring_sizes = relationship('RingSize', secondary=fw_rings,
-                              backref='frameworks')
-    natural_tilings = relationship('NaturalTiling', secondary=fw_tilings,
-                                   backref='frameworks')
+    ring_sizes = relationship("RingSize", secondary=fw_rings, backref="frameworks")
+    natural_tilings = relationship(
+        "NaturalTiling", secondary=fw_tilings, backref="frameworks"
+    )
 
     # one to many relationship
     tatoms = relationship("TAtom")
@@ -403,47 +423,58 @@ class Framework(Base):
     def __repr__(self):
         return "%s(\n%s)" % (
             (self.__class__.__name__),
-            ' '.join(["\t%s=%r,\n" % (key, getattr(self, key))
-                      for key in sorted(self.__dict__.keys())
-                      if not key.startswith('_')]))
+            " ".join(
+                [
+                    "\t%s=%r,\n" % (key, getattr(self, key))
+                    for key in sorted(self.__dict__.keys())
+                    if not key.startswith("_")
+                ]
+            ),
+        )
 
 
 def cli_getcif():
-    'CLI to get the cif files'
+    "CLI to get the cif files"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('code', help='Three letter framework code')
+    parser.add_argument("code", help="Three letter framework code")
     args = parser.parse_args()
 
     if len(args.code) != 3:
-        raise ValueError('Framework error should have three letters')
+        raise ValueError("Framework error should have three letters")
     else:
         fram = framework(args.code.upper())
-        fname = fram.code + '.cif'
-        with open(fname, 'w') as out:
+        fname = fram.code + ".cif"
+        with open(fname, "w") as out:
             out.write(fram.cif)
-        print('Wrote to file: {}'.format(fname))
+        print("Wrote to file: {}".format(fname))
 
 
 def cli_print_framework():
-    'CLI interface for getting information about a given framework'
+    "CLI interface for getting information about a given framework"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('code', help='Three letter framework code')
-    parser.add_argument('-f', help='Full information')
+    parser.add_argument("code", help="Three letter framework code")
+    parser.add_argument("-f", help="Full information")
     args = parser.parse_args()
 
     if len(args.code) != 3:
-        raise ValueError('Framework error should have three letters')
+        raise ValueError("Framework error should have three letters")
     else:
         f = framework(args.code.upper())
 
-        code = f.code.center(50, '=') + '\n'
+        code = f.code.center(50, "=") + "\n"
 
-        cell = '\n'.join([
-            'Cell parameters',
-            '\ta={a:7.3f} Å  b={b:7.3f} Å  c={c:7.3f} Å'.format(a=f.a, b=f.b, c=f.c),
-            '\tα={a:7.3f} °  β={b:7.3f} °  γ={c:7.3f} °'.format(a=f.alpha, b=f.beta, c=f.gamma),
-            ])
+        cell = "\n".join(
+            [
+                "Cell parameters",
+                "\ta={a:7.3f} Å  b={b:7.3f} Å  c={c:7.3f} Å".format(
+                    a=f.a, b=f.b, c=f.c
+                ),
+                "\tα={a:7.3f} °  β={b:7.3f} °  γ={c:7.3f} °".format(
+                    a=f.alpha, b=f.beta, c=f.gamma
+                ),
+            ]
+        )
 
-        print(code, cell, sep='\n')
+        print(code, cell, sep="\n")
