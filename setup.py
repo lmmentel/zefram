@@ -14,7 +14,7 @@ LICENSE = "MIT"
 URL = "https://bitbucket.org/lukaszmentel/zefram"
 AUTHOR = "Lukasz Mentel"
 EMAIL = "lmmentel@gmail.com"
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 
 # Add here all kinds of additional classifiers as defined under
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
